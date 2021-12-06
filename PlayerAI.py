@@ -9,6 +9,7 @@ from Utils import *
 import sys
 import os
 from helper_functions import *
+from minimax import find_best_move
 
 # setting path to parent directory
 sys.path.append(os.getcwd())
@@ -53,7 +54,8 @@ class PlayerAI(BaseAI):
 
         # available_moves = grid.get_neighbors(self.pos, only_available=True)
         # new_pos = random.choice(available_moves) if available_moves else None
-        new_pos = move_heuristic(player_num=self.player_num, position=self.pos, grid=grid)
+        #new_pos = move_heuristic(player_num=self.player_num, position=self.pos, grid=grid)
+        new_pos = find_best_move(grid, self.player_num)
         return new_pos
 
     def getTrap(self, grid: Grid) -> tuple:
