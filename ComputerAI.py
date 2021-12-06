@@ -28,23 +28,23 @@ class ComputerAI(BaseAI):
     def getMove(self, grid):
         """ Returns a random, valid move """
 
-        # # find all available moves
-        # available_moves = grid.get_neighbors(self.pos, only_available = True)
-        #
-        # # make random move
-        # new_pos = random.choice(available_moves) if available_moves else None
-        new_pos = move_heuristic(player_num=self.player_num, position=self.pos, grid=grid)
+        # find all available moves
+        available_moves = grid.get_neighbors(self.pos, only_available = True)
+
+        # make random move
+        new_pos = random.choice(available_moves) if available_moves else None
+
         return new_pos
 
     def getTrap(self, grid: Grid):
         """Get the *intended* trap move of the player"""
 
-        # # find all available cells in the grid
-        # available_cells = grid.getAvailableCells()
-        #
-        # # find all available cells
-        # trap = random.choice(available_cells) if available_cells else None
-        trap = trap_heuristic(player_num=self.player_num, grid=grid)
+        # find all available cells in the grid
+        available_cells = grid.getAvailableCells()
+
+        # find all available cells
+        trap = random.choice(available_cells) if available_cells else None
+
         return trap
 
 

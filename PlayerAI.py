@@ -52,10 +52,8 @@ class PlayerAI(BaseAI):
 
         """
 
-        # available_moves = grid.get_neighbors(self.pos, only_available=True)
-        # new_pos = random.choice(available_moves) if available_moves else None
-        #new_pos = move_heuristic(player_num=self.player_num, position=self.pos, grid=grid)
-        new_pos = find_best_move(grid, self.player_num)
+        new_pos = move_heuristic(player_num=self.player_num, position=self.pos, grid=grid)
+        #new_pos = find_best_move(grid, self.player_num)
         return new_pos
 
     def getTrap(self, grid: Grid) -> tuple:
@@ -72,7 +70,5 @@ class PlayerAI(BaseAI):
         You may adjust the input variables as you wish (though it is not necessary). Output has to be (x,y) coordinates.
 
         """
-        # Random Traps:
-        # available_cells = grid.getAvailableCells()
-        trap = trap_heuristic(player_num=self.player_num, grid=grid)
+        trap = trap_h(player_num=self.player_num, grid=grid)
         return trap
