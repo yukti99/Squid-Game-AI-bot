@@ -34,7 +34,10 @@ def trap_heuristic(player_num: int, grid: Grid):
 def board_value(grid, my_position, opponent_pos):
     distance = manhattan_distance(my_position, opponent_pos)
     no_neighbours = len(grid.get_neighbors(my_position))
-    return no_neighbours + distance
+    opponent_neighbours = len(grid.get_neighbors(opponent_pos))
+    return 2*(no_neighbours) - opponent_neighbours
+    # return (2*no_neighbours - opponent_neighbours)
+    return no_neighbours
 
 
 def move_heuristic(player_num: int, position, grid: Grid):

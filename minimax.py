@@ -10,11 +10,11 @@ def move_minimax(grid: Grid, depth, player_no, move, isMax):
     grid.move(position, player_no)
     print("player_no:{}".format(player_no))
     if len(get_opponent_neighbours(grid, player_no)) == 0:
-        return sys.maxsize
+        return board_value(grid, grid.find(player_no), grid.find(3 - player_no))
     if len(grid.get_neighbors(position)) == 0:
-        return -sys.maxsize
+        return board_value(grid, grid.find(player_no), grid.find(3 - player_no))
         #return board_value(grid, grid.find(player_no), grid.find(3 - player_no))
-    if depth > 3: #or get_opponent_neighbours(grid, player_no) == 0:
+    if depth > 2: #or get_opponent_neighbours(grid, player_no) == 0:
         return board_value(grid, grid.find(player_no), grid.find(3 - player_no))
     if isMax:
         print("Entered isMax with Player No:{}".format(player_no))
@@ -54,7 +54,7 @@ def find_best_move(grid: Grid, player_no):
     grid_clone = grid.clone()
     for i in range(len(my_new_available_moves)):
         print("Checking Current Move:{}".format(my_new_available_moves[i]))
-        move_value = move_minimax(grid_clone, 1, player_no, my_new_available_moves[i], True)
+        move_value = move_minimax(grid_clone, 0, player_no, my_new_available_moves[i], True)
         moves_dict[my_new_available_moves[i]] = move_value
     good_move = max(moves_dict, key=moves_dict.get)
     return good_move
