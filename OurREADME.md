@@ -18,11 +18,11 @@
    3. `is_valid_move` - returns bool
    4. `is_valid_trap` - cell can't be a player
    5. `updateAlarm` - activates doll if time limit exceeded <br>
-   ####Note: update line 231 only to PlayerAI() to test your player!
+   #### Note: update line 231 only to PlayerAI() to test your player!
 
 3. Utils.py: file containing default heuristic function - manhatten function
 4. PlayerAI.py: file where all the code will be written<br>
-   #####TODO
+   ##### TODO
    1. getMove() - ExpectiMinimax algorithm, maximizing over the Opponent's *Trap* actions
    2. getTrap() - ExpectiMinimax algorithm, maximizing over the Opponent's *Move* actions
    3. we move before we trap
