@@ -7,7 +7,7 @@ from test_players.EasyAI import EasyAI
 from Utils import *
 import time
 
-from test_players.MediumAI import MediumAI
+# from test_players.MediumAI import MediumAI
 
 PLAYER_TURN, COMPUTER_TURN = 1,2
 
