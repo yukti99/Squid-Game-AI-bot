@@ -10,7 +10,7 @@ def get_opponent_position(grid: Grid, player_num: int):
 
 def get_opponent_neighbours(grid: Grid, player_num: int):
     opponent_pos = get_opponent_position(grid=grid, player_num=player_num)
-    opponent_neighbours = grid.get_neighbors(opponent_pos)
+    opponent_neighbours = grid.get_neighbors(opponent_pos, only_available=True)
     return opponent_neighbours
 
 

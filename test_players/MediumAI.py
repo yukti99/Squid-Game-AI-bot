@@ -44,5 +44,6 @@ class MediumAI(BaseAI):
         available_cells = grid.get_neighbors(opponent, only_available=True)
 
         # throw to one of the available cells randomly
-        trap = random.choice(available_cells)
+        #trap = random.choice(available_cells)
+        trap = trap_h(player_num=self.player_num, grid=grid)
         return trap

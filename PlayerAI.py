@@ -9,7 +9,8 @@ from Utils import *
 import sys
 import os
 from helper_functions import *
-from minimax import find_best_move
+from move_minimax import find_best_move
+from trap_minimax import find_best_trap
 
 # setting path to parent directory
 sys.path.append(os.getcwd())
@@ -52,8 +53,8 @@ class PlayerAI(BaseAI):
 
         """
 
-        new_pos = move_heuristic(player_num=self.player_num, position=self.pos, grid=grid)
-        #new_pos = find_best_move(grid, self.player_num)
+        #new_pos = move_heuristic(player_num=self.player_num, position=self.pos, grid=grid)
+        new_pos = find_best_move(grid, self.player_num)
         return new_pos
 
     def getTrap(self, grid: Grid) -> tuple:
@@ -71,4 +72,5 @@ class PlayerAI(BaseAI):
 
         """
         trap = trap_h(player_num=self.player_num, grid=grid)
+        #trap = find_best_trap(grid=grid, player_no=self.player_num)
         return trap
