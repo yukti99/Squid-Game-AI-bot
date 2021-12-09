@@ -7,6 +7,8 @@ PLAYER = 1
 OPPONENT = 2
 
 
+
+
 def new_trap_minimax(grid: Grid, depth, player, position, isMax):
     if depth > 5:
         # Todo: Something
