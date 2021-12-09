@@ -4,9 +4,11 @@ from ComputerAI import ComputerAI
 from Displayer import Displayer
 from PlayerAI import PlayerAI
 from test_players.EasyAI import EasyAI
-from test_players.MediumAI import MediumAI
+#from test_players.MediumAI import MediumAI
+from test_players.MediumAI_2 import MediumAI
 from Utils import *
 import time
+
 
 # from test_players.MediumAI import MediumAI
 

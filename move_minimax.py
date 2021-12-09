@@ -56,7 +56,7 @@ def find_best_move(grid: Grid, player_no):
     my_new_available_moves = grid.get_neighbors(my_position, only_available=True)
     moves_dict = {}
     grid_clone = grid.clone()
-    for i in range(len(my_new_available_moves)):
+    for  in range(len(my_new_available_moves)):
         print("Checking Current Move:{}".format(my_new_available_moves[i]))
         move_value = move_minimax(grid_clone, 0, player_no, my_new_available_moves[i], True)
         moves_dict[my_new_available_moves[i]] = move_value
