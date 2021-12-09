@@ -54,12 +54,12 @@ def minimax_trap(grid: Grid, depth, player, isMax):
     if len(player_neighbours):
         return -sys.maxsize
 
-    good_traps_against_opponent = trap_heuristic(player, grid)
+    good_traps_against_opponent = trap_h(player, grid)
     if isMax is True:
         # we put trap
         best_value = -sys.maxsize
         for i in good_traps_against_opponent:
-            grid.trap(i)
+            grid.setCellValue(i, -1)
             best_value = max(best_value, minimax_trap(grid, depth+1, player, False))
             grid.setCellValue(i, 0)
         return best_value
