@@ -15,7 +15,7 @@ def get_opponent_neighbours(grid: Grid, player_num: int):
 
 
 def trap_heuristic(player_num: int, grid: Grid):
-    opponent_neighbours = get_opponent_neighbours(grid,player_num=player_num)
+    opponent_neighbours = get_opponent_neighbours(grid, player_num=player_num)
     moves_dict = {}
     grid_clone = grid.clone()
     opponent_pos = get_opponent_position(grid_clone, player_num)

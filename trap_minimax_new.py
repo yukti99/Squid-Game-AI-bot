@@ -32,13 +32,18 @@ def basic_heuristic(grid, my_position, opponent_pos):
     return 2*no_neighbours - opponent_neighbours
 
 
+def basic_heuristic_for_new_trap(grid, opponent_pos):
+    opponent_neighbours = len(grid.get_neighbors(opponent_pos, only_available=True))
+    return -opponent_neighbours
+
+
 # motive: trap the opponent based on some heuristic
 def minimax_trap(grid: Grid, depth, player, isMax):
     '''
     BASE CASES
     '''
     opp_neighbours = get_opponent_neighbours(grid, player)
-    player_neighbours = grid.get_neighbors(grid.find(player), True)
+    player_neighbours = grid.get_neighbors(grid.find(player), only_available=True)
 
     if depth > 3:
         opponent_pos = grid.find(3-player)
@@ -47,14 +52,14 @@ def minimax_trap(grid: Grid, depth, player, isMax):
         return basic_heuristic(grid, player_pos, opponent_pos)
 
     # if we win
-    if len(opp_neighbours):
+    if len(opp_neighbours) == 0:
         return sys.maxsize
 
     # if opponent wins
-    if len(player_neighbours):
+    if len(player_neighbours) == 0:
         return -sys.maxsize
 
-    good_traps_against_opponent = trap_heuristic(player, grid)
+    good_traps_against_opponent = trap_h(player, grid)
     if isMax is True:
         # we put trap
         best_value = -sys.maxsize
@@ -81,11 +86,13 @@ def find_trap(grid, player):
     opp_neighbours = get_opponent_neighbours(grid, player)
     grid_clone = grid.clone()
     good_trap = -sys.maxsize
-    good_trap_pos = (-1, -1)
+    good_trap_pos = random.choice(opp_neighbours)
     for i in range(len(opp_neighbours)):
-        # print("Checking Current Move:{}".format(opp_neighbours[i]))
-        grid.trap(opp_neighbours[i])
+        print("Placing trap on = ", opp_neighbours[i], " in th grid and called minmax for the same")
+        grid_clone.setCellValue(opp_neighbours[i], -1)
         trap_value = minimax_trap(grid_clone, 0, player,  True)
+        grid_clone.setCellValue(opp_neighbours[i], 0)
+        print("\n Trap value obtained for -", opp_neighbours[i], " is  = ", trap_value)
         if good_trap < trap_value:
             good_trap = trap_value
             good_trap_pos = opp_neighbours[i]
