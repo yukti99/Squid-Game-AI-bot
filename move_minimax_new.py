@@ -100,18 +100,18 @@ def minimax_move(grid: Grid, depth, player, isMax):
 
 
 def find_move(grid, player):
-    print("USING NEW MOVE MINMAX ----------------------------------")
+    # print("USING NEW MOVE MINMAX ----------------------------------")
     # get opponent available moves
     my_neighbours = grid.get_neighbors(grid.find(player), True)
     grid_clone = grid.clone()
     good_move = -sys.maxsize
     good_move_pos = random.choice(my_neighbours)
     for i in range(len(my_neighbours)):
-        print("moving player to = ",my_neighbours[i], " in th grid and called minmax for the same")
+        # print("moving player to = ",my_neighbours[i], " in th grid and called minmax for the same")
         grid_clone.move(my_neighbours[i], player)
         move_value = minimax_move(grid_clone, 0, player,  True)
         grid_clone.setCellValue(my_neighbours[i], 0)
-        print("\n Move value obtained for -", my_neighbours[i], " is  = ", move_value)
+        # print("\n Move value obtained for -", my_neighbours[i], " is  = ", move_value)
         # print()
         if good_move < move_value:
             good_move = move_value

@@ -81,18 +81,18 @@ def minimax_trap(grid: Grid, depth, player, isMax):
 
 
 def find_trap(grid, player):
-    print("USING NEW TRAP MINMAX ----------------------------------")
+    # print("USING NEW TRAP MINMAX ----------------------------------")
     # get opponent available moves
     opp_neighbours = get_opponent_neighbours(grid, player)
     grid_clone = grid.clone()
     good_trap = -sys.maxsize
     good_trap_pos = random.choice(opp_neighbours)
     for i in range(len(opp_neighbours)):
-        print("Placing trap on = ", opp_neighbours[i], " in th grid and called minmax for the same")
+        # print("Placing trap on = ", opp_neighbours[i], " in th grid and called minmax for the same")
         grid_clone.setCellValue(opp_neighbours[i], -1)
         trap_value = minimax_trap(grid_clone, 0, player,  True)
         grid_clone.setCellValue(opp_neighbours[i], 0)
-        print("\n Trap value obtained for -", opp_neighbours[i], " is  = ", trap_value)
+        # print("\n Trap value obtained for -", opp_neighbours[i], " is  = ", trap_value)
         if good_trap < trap_value:
             good_trap = trap_value
             good_trap_pos = opp_neighbours[i]
