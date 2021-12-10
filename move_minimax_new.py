@@ -3,6 +3,8 @@ from Utils import *
 import sys
 import random
 from helper_functions import *
+ALPHA = -sys.maxsize
+BETA = sys.maxsize
 
 
 def move_heuristic(player_num: int, grid: Grid):
@@ -35,7 +37,7 @@ def basic_heuristic(grid, my_position, opponent_pos, depth):
 
 
 # motive: trap the opponent based on some heuristic
-def minimax_move(grid: Grid, depth, player, isMax):
+def minimax_move(grid: Grid, depth, player, isMax,  alpha, beta):
     '''
     BASE CASES
     '''
@@ -74,9 +76,14 @@ def minimax_move(grid: Grid, depth, player, isMax):
             grid.move(i, player)
             # print("player moved to ",i," in the grid")
             # grid.print_grid()
-            best_value = max(best_value, minimax_move(grid, depth+1, player, False))
+            best_value = max(best_value, minimax_move(grid, depth+1, player, False, alpha, beta))
+            alpha = max(alpha, best_value)
             # print("best value obtained = ", best_value)
             grid.move(previous_player_position, player)
+            # Alpha Beta Pruning
+            if beta <= alpha:
+                # print("Tree Pruning in MAX MOVE!")
+                break
             # print("moved player in grid to previous pos = ", previous_player_position)
             # grid.print_grid()
             # print()
@@ -90,10 +97,15 @@ def minimax_move(grid: Grid, depth, player, isMax):
             # print("setting - ", j," pos as trap")
             grid.setCellValue(j, -1)
             # grid.print_grid()
-            best_value = min(best_value, minimax_move(grid, depth+1, player, True))
+            best_value = min(best_value, minimax_move(grid, depth+1, player, True, alpha, beta))
+            beta = min(beta, best_value)
             # print("best min value obtained = ",best_value)
             # print("resetting - ",j ," pos as empty")
             grid.setCellValue(j, 0)
+            # Alpha Beta Pruning
+            if beta <= alpha:
+                # print("Tree Pruning in MIN MOVE!")
+                break
             # grid.print_grid()
             # print()
         return best_value
@@ -109,7 +121,7 @@ def find_move(grid, player):
     for i in range(len(my_neighbours)):
         # print("moving player to = ",my_neighbours[i], " in th grid and called minmax for the same")
         grid_clone.move(my_neighbours[i], player)
-        move_value = minimax_move(grid_clone, 0, player,  True)
+        move_value = minimax_move(grid_clone, 0, player,  True, ALPHA, BETA)
         grid_clone.setCellValue(my_neighbours[i], 0)
         # print("\n Move value obtained for -", my_neighbours[i], " is  = ", move_value)
         # print()
