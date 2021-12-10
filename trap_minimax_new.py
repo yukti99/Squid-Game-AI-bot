@@ -39,7 +39,7 @@ def basic_heuristic_for_new_trap(grid, opponent_pos):
 
 
 # motive: trap the opponent based on some heuristic
-def minimax_trap(grid: Grid, depth, player, isMax, alpha, beta):
+def minimax_trap(grid: Grid, depth, player, isMax, alpha, beta, current_trap: tuple):
     '''
     BASE CASES
     '''
@@ -61,48 +61,74 @@ def minimax_trap(grid: Grid, depth, player, isMax, alpha, beta):
         return -sys.maxsize
 
     good_traps_against_opponent = trap_h(player, grid)
-    if isMax is True:
+
+    if isMax == 1:
         # we put trap
         best_value = -sys.maxsize
 
         for i in good_traps_against_opponent:
 
-            hit_probability = 1 - 0.05 * (manhattan_distance(grid.find(player), i) - 1)
-            all_possible_positions = grid.get_neighbors(i, only_available=True)
-            all_possible_positions.append(i)
+            # hit_probability = 1 - 0.05 * (manhattan_distance(grid.find(player), i) - 1)
+            # all_possible_positions = grid.get_neighbors(i, only_available=True)
+            # all_possible_positions.append(i)
             # missing_probability = ((1 - hit_probability) / len(grid.get_neighbors(i)))
             # expectation = 0
             #
             # for j in range(len(all_possible_positions)):
             #     if i == all_possible_positions[j]:
-            # grid.setCellValue(all_possible_positions[j], -1)
-            grid.setCellValue(i, -1)
-            best_value = minimax_trap(grid, depth + 1, player, False, alpha, beta)
-            expectation = hit_probability * best_value
-            grid.setCellValue(all_possible_positions[j], 0)
+            # grid.setCellValue(i, -1)
+            expectation = minimax_trap(grid, depth + 1, player, 2, alpha, beta, i)
+            # grid.setCellValue(i, 0)
                 # else:
                 #     expectation = expectation + missing_probability * best_value
 
             best_value = max(best_value, expectation)
             alpha = max(alpha, best_value)
             if beta <= alpha:
-                print("BREAK!!!")
+                #print("BREAK!!!")
                 break
 
         return best_value
 
-    else:
+    elif isMax == 0:
         # opponent moves
         best_value = sys.maxsize
         previous_player_position = grid.find(3-player)
         for j in good_traps_against_opponent:
             grid.move(j, 3-player)
-            best_value = min(best_value, minimax_trap(grid, depth+1, player, True, alpha, beta))
+            best_value = min(best_value, minimax_trap(grid, depth+1, player, 1, alpha, beta, (0, 0)))
             beta = min(beta, best_value)
             grid.move(previous_player_position, 3-player)
             if beta <= alpha:
                 break
         return best_value
+
+    else:
+        # chance node
+        best_value = -sys.maxsize
+        i = current_trap
+        hit_probability = 1 - 0.05 * (manhattan_distance(grid.find(player), i) - 1)
+        missing_probability = ((1 - hit_probability) / len(grid.get_neighbors(i)))
+        expectation = 0
+        all_possible_positions = grid.get_neighbors(i, only_available=True)
+        all_possible_positions.append(i)
+        for j in range(len(all_possible_positions)):
+            grid.setCellValue(all_possible_positions[j], -1)
+
+            if i == all_possible_positions[j]:
+                best_value = minimax_trap(grid, depth + 1, player, 0, alpha, beta, (0,0))
+                expectation = expectation + hit_probability * best_value
+            else:
+                best_value = minimax_trap(grid, depth + 1, player, 0, alpha, beta, (0, 0))
+                expectation = expectation + missing_probability * best_value
+
+            grid.setCellValue(all_possible_positions[j], 0)
+
+        # alpha = max(alpha, best_value)
+        # if beta <= alpha:
+        #     print("BREAK!!!")
+        #     break
+        return expectation
 
 
 def get_unavailable_neighbors(grid, player):
@@ -128,7 +154,7 @@ def find_trap(grid, player):
         for i in range(len(opp_neighbours)):
             # print("Placing trap on = ", opp_neighbours[i], " in th grid and called minmax for the same")
             grid_clone.setCellValue(opp_neighbours[i], -1)
-            trap_value = minimax_trap(grid_clone, 0, player,  True, ALPHA, BETA)
+            trap_value = minimax_trap(grid_clone, 0, player, 1, ALPHA, BETA, (0,0))
             grid_clone.setCellValue(opp_neighbours[i], 0)
             # print("\n Trap value obtained for -", opp_neighbours[i], " is  = ", trap_value)
             if good_trap < trap_value:

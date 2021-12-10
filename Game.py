@@ -6,6 +6,7 @@ from PlayerAI import PlayerAI
 from test_players.EasyAI import EasyAI
 #from test_players.MediumAI import MediumAI
 from test_players.MediumAI_2 import MediumAI
+from test_players.HardAI import HardAI
 from Utils import *
 import time
 
@@ -232,7 +233,7 @@ class Game():
 def main():
 
     playerAI = PlayerAI() # change this to PlayerAI() to test your player!
-    computerAI = MediumAI() #EasyAI() # change this to a more sophisticated player you've coded
+    computerAI = HardAI() #MediumAI() #EasyAI() # change this to a more sophisticated player you've coded
     displayer = Displayer()
     game = Game(playerAI = playerAI, computerAI = computerAI, N = 7, displayer=displayer)
     
