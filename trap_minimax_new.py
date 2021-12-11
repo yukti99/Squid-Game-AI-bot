@@ -10,6 +10,69 @@ MAX_DEPTH = 2
 # f = open("test.txt", 'w')
 
 
+
+def hardcode(grid, player):
+    corners = [(1, 1), (1, 5), (5, 1), (5, 5)]
+    opponent_pos = get_opponent_position(grid, player)
+    x, y = opponent_pos
+    dictionary = {}
+    for i in range(4):
+        dictionary[corners[i]] = manhattan_distance(corners[i], opponent_pos)
+
+    best_corner = min(dictionary, key=dictionary.get)
+    print("best_corner:{}".format(best_corner))
+    weights_list = [7, 6, 5, 4, 3, 2, 1]
+
+    d = [(max(x - 1, 0), min(y + 1, 6)), (x, min(y + 1, 6)), (max(x - 1, 0), y), (max(x - 1, 0), max(y - 1, 0)),
+         (min(x + 1, 6), min(y + 1, 6)), (min(x + 1, 6), y), (min(x + 1, 6), y)]
+
+    # Right-up, right, right-down, up, up-left, left, down
+    if best_corner == (5, 1):
+        d = [(max(x - 1, 0), min(y + 1, 6)), (x, min(y + 1, 6)), (max(x - 1, 0), y), (max(x - 1, 0), max(y - 1, 0)),
+             (min(x + 1, 6), min(y + 1, 6)), (min(x + 1, 6), y), (min(x + 1, 6), y)]
+
+    # Bottom Right, Bottom, Bottom Left, Right, Top Right, Top, Left, Top Left
+    elif best_corner == (1, 1):
+        d = [(min(x + 1, 6), min(y + 1, 6)), (min(x+1, 6), y), (min(x + 1, 6), max(y-1, 0)), (x, min(y + 1, 6)),
+             (max(x - 1, 0), min(y + 1, 6)), (min(x - 1, 6), y), (max(x - 1, 0), min(y-1, 0))]
+
+    # #Top Left, Left, Top, Bottom Left, Top Right, Right, Bottom Right
+    elif best_corner == (5, 5):
+        d = [(max(x - 1, 0), max(y - 1, 0)), (max(x-1, 0), y), (x, max(y-1, 0)), (min(x + 1, 6), max(y - 1, 0)),
+             (max(x - 1, 0), min(y + 1, 6)), (x, min(y+1, 6)), (min(x + 1, 6), min(y+1, 6))]
+    # else:
+    #     d = [(max(x - 1, 0), min(y + 1, 6)), (x, min(y + 1, 6)), (max(x - 1, 0), y), (max(x - 1, 0), max(y - 1, 0)),
+    #          (min(x + 1, 6), min(y + 1, 6)), (min(x + 1, 6), y), (min(x + 1, 6), y)]
+    max_pos = []
+    for i in range(len(d)):
+        if grid.getCellValue(d[i]) == 0:
+            max_pos.append(d[i])
+    return max_pos
+
+
+def trap_h_new(grid, player):
+
+
+
+
+
+    opponent_neighbors = get_opponent_neighbours(grid, player)
+    corner_distance_dict = {}
+    for i in range(len(opponent_neighbors)):
+        corner_distance_dict[opponent_neighbors[i]] = manhattan_distance(best_corner, opponent_neighbors[i])
+
+    return max(corner_distance_dict, key=corner_distance_dict.get)
+
+
+def diagonal(pos1, pos2):
+    (x1,y1) = pos1
+    (x2, y2) = pos2
+    if x1 != x2 and y1 != y2:
+        return True
+    else:
+        return False
+
+
 def trap_h(player_num: int, grid: Grid, depth):
     # global f
     opponent_neighbours = get_opponent_neighbours(grid, player_num=player_num)
@@ -27,8 +90,9 @@ def trap_h(player_num: int, grid: Grid, depth):
     #     slice_no = len(opponent_neighbours)
     for i in range(len(opponent_neighbours)):
         if grid_clone.getCellValue(opponent_neighbours[i]) == 0:
-            board_v = board_value(grid_clone, opponent_neighbours[i], player_pos)
-            if manhattan_distance(opponent_position, opponent_neighbours[i]) == 2:
+            available_cells = len(grid.get_neighbors(opponent_neighbours[i], only_available=True))
+            board_v = available_cells * board_value(grid_clone, opponent_neighbours[i], player_pos)
+            if diagonal(opponent_position, opponent_neighbours[i]):
                 board_v = board_v * 1.5
             # print("Position: {} and board value:{}".format(opponent_neighbours[i], board_v))
             board_value_dict[opponent_neighbours[i]] = board_v
@@ -82,12 +146,13 @@ def minimax_trap(grid: Grid, depth, player, isMax, alpha, beta, current_trap: tu
     if len(player_neighbours) == 0:
         return -sys.maxsize
 
-    good_traps_against_opponent = trap_h(player, grid, depth)
+    # good_traps_against_opponent = trap_h(player, grid, depth)
+    good_traps_against_opponent = hardcode(grid,player)
 
     if isMax == 1:
         # we put trap
         best_value = -sys.maxsize
-
+        counter = 0
         for i in good_traps_against_opponent:
 
             # hit_probability = 1 - 0.05 * (manhattan_distance(grid.find(player), i) - 1)
@@ -99,7 +164,7 @@ def minimax_trap(grid: Grid, depth, player, isMax, alpha, beta, current_trap: tu
             # for j in range(len(all_possible_positions)):
             #     if i == all_possible_positions[j]:
             # grid.setCellValue(i, -1)
-            expectation = minimax_trap(grid, depth, player, 2, alpha, beta, i)
+            expectation = (len(good_traps_against_opponent) - counter) * minimax_trap(grid, depth, player, 2, alpha, beta, i)
             # grid.setCellValue(i, 0)
                 # else:
                 #     expectation = expectation + missing_probability * best_value
@@ -110,7 +175,7 @@ def minimax_trap(grid: Grid, depth, player, isMax, alpha, beta, current_trap: tu
                 # print("Tree Pruning in MAX TRAP!")
                 #print("BREAK!!!")
                 break
-
+            counter = counter + 1
         return best_value
 
     elif isMax == 0:
