@@ -5,18 +5,37 @@ import random
 from helper_functions import *
 ALPHA = -sys.maxsize
 BETA = sys.maxsize
+MAX_DEPTH = 2
 
-def trap_h(player_num: int, grid: Grid):
+# f = open("test.txt", 'w')
+
+
+def trap_h(player_num: int, grid: Grid, depth):
+    # global f
     opponent_neighbours = get_opponent_neighbours(grid, player_num=player_num)
+    opponent_position = get_opponent_position(grid, player_num)
+
     board_value_dict = {}
     grid_clone = grid.clone()
     player_pos = grid.find(player_num)
+
+    # if depth == 0 or depth == 1:
+    #     slice_no = int(len(opponent_neighbours)/float(1.5))
+    # elif len(opponent_neighbours) > 5:
+    #     slice_no = int(len(opponent_neighbours) * (1 - depth/10))
+    # else:
+    #     slice_no = len(opponent_neighbours)
     for i in range(len(opponent_neighbours)):
         if grid_clone.getCellValue(opponent_neighbours[i]) == 0:
             board_v = board_value(grid_clone, opponent_neighbours[i], player_pos)
+            if manhattan_distance(opponent_position, opponent_neighbours[i]) == 2:
+                board_v = board_v * 1.5
             # print("Position: {} and board value:{}".format(opponent_neighbours[i], board_v))
             board_value_dict[opponent_neighbours[i]] = board_v
     max_position = list(sorted(board_value_dict, key=board_value_dict.get,reverse=True))
+    # max_position = max_position[:slice_no]
+    # f.write(str(len(max_position)/len(opponent_neighbours)))
+    # f.write("\n")
     return max_position
 
 
@@ -43,14 +62,17 @@ def minimax_trap(grid: Grid, depth, player, isMax, alpha, beta, current_trap: tu
     '''
     BASE CASES
     '''
+    # print("Increasing Depth by 1 :{}".format(depth))
     opp_neighbours = get_opponent_neighbours(grid, player)
     player_neighbours = grid.get_neighbors(grid.find(player), only_available=True)
 
-    if depth > 3:
+    if depth > MAX_DEPTH:
+        # print("Terminal State reached!!!!")
         opponent_pos = grid.find(3-player)
         player_pos = grid.find(player)
         # return basic heuristic when depth reached
         return basic_heuristic(grid, player_pos, opponent_pos)
+
 
     # if we win
     if len(opp_neighbours) == 0:
@@ -60,7 +82,7 @@ def minimax_trap(grid: Grid, depth, player, isMax, alpha, beta, current_trap: tu
     if len(player_neighbours) == 0:
         return -sys.maxsize
 
-    good_traps_against_opponent = trap_h(player, grid)
+    good_traps_against_opponent = trap_h(player, grid, depth)
 
     if isMax == 1:
         # we put trap
@@ -77,7 +99,7 @@ def minimax_trap(grid: Grid, depth, player, isMax, alpha, beta, current_trap: tu
             # for j in range(len(all_possible_positions)):
             #     if i == all_possible_positions[j]:
             # grid.setCellValue(i, -1)
-            expectation = minimax_trap(grid, depth + 1, player, 2, alpha, beta, i)
+            expectation = minimax_trap(grid, depth, player, 2, alpha, beta, i)
             # grid.setCellValue(i, 0)
                 # else:
                 #     expectation = expectation + missing_probability * best_value
@@ -85,6 +107,7 @@ def minimax_trap(grid: Grid, depth, player, isMax, alpha, beta, current_trap: tu
             best_value = max(best_value, expectation)
             alpha = max(alpha, best_value)
             if beta <= alpha:
+                # print("Tree Pruning in MAX TRAP!")
                 #print("BREAK!!!")
                 break
 
@@ -100,6 +123,7 @@ def minimax_trap(grid: Grid, depth, player, isMax, alpha, beta, current_trap: tu
             beta = min(beta, best_value)
             grid.move(previous_player_position, 3-player)
             if beta <= alpha:
+                # print("Tree Pruning in MIN TRAP!")
                 break
         return best_value
 
@@ -111,6 +135,7 @@ def minimax_trap(grid: Grid, depth, player, isMax, alpha, beta, current_trap: tu
         missing_probability = ((1 - hit_probability) / len(grid.get_neighbors(i)))
         expectation = 0
         all_possible_positions = grid.get_neighbors(i, only_available=True)
+        # all_possible_positions = all_possible_positions[:something(depth)]
         all_possible_positions.append(i)
         for j in range(len(all_possible_positions)):
             grid.setCellValue(all_possible_positions[j], -1)
@@ -123,7 +148,11 @@ def minimax_trap(grid: Grid, depth, player, isMax, alpha, beta, current_trap: tu
                 expectation = expectation + missing_probability * best_value
 
             grid.setCellValue(all_possible_positions[j], 0)
-
+            best_value = max(best_value, expectation)
+            alpha = max(alpha, best_value)
+            if beta <= alpha:
+                # print("Tree Pruning in CHANCE MIN TRAP!")
+                break
         # alpha = max(alpha, best_value)
         # if beta <= alpha:
         #     print("BREAK!!!")
