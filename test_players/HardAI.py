@@ -48,6 +48,6 @@ class HardAI(BaseAI):
 
         # throw to one of the available cells randomly
         # trap = random.choice(available_cells)
-        # trap = trap_h(player_num=self.player_num, grid=grid)
-        trap = find_trap(grid, self.player_num)
+        trap = trap_h(player_num=self.player_num, grid=grid)
+        # trap = find_trap(grid, self.player_num)
         return trap

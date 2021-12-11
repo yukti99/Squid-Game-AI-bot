@@ -46,7 +46,7 @@ def minimax_trap(grid: Grid, depth, player, isMax, alpha, beta, current_trap: tu
     opp_neighbours = get_opponent_neighbours(grid, player)
     player_neighbours = grid.get_neighbors(grid.find(player), only_available=True)
 
-    if depth > 3:
+    if depth > 2:
         opponent_pos = grid.find(3-player)
         player_pos = grid.find(player)
         # return basic heuristic when depth reached
@@ -77,7 +77,7 @@ def minimax_trap(grid: Grid, depth, player, isMax, alpha, beta, current_trap: tu
             # for j in range(len(all_possible_positions)):
             #     if i == all_possible_positions[j]:
             # grid.setCellValue(i, -1)
-            expectation = minimax_trap(grid, depth + 1, player, 2, alpha, beta, i)
+            expectation = minimax_trap(grid, depth, player, 2, alpha, beta, i)
             # grid.setCellValue(i, 0)
                 # else:
                 #     expectation = expectation + missing_probability * best_value

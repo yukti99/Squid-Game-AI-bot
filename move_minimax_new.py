@@ -44,7 +44,7 @@ def minimax_move(grid: Grid, depth, player, isMax,  alpha, beta, current_move: t
     opp_neighbours = get_opponent_neighbours(grid, player)
     player_neighbours = grid.get_neighbors(grid.find(player), True)
 
-    if depth > 4:
+    if depth > 3:
         # print("Reducing Depth and returning basic heuristic!!")
         opponent_pos = grid.find(3-player)
         player_pos = grid.find(player)
@@ -97,7 +97,7 @@ def minimax_move(grid: Grid, depth, player, isMax,  alpha, beta, current_move: t
             # print("setting - ", j," pos as trap")
             # grid.setCellValue(j, -1)
             # grid.print_grid()
-            expectation = minimax_move(grid, depth + 1, player, 2, alpha, beta, j)
+            expectation = minimax_move(grid, depth, player, 2, alpha, beta, j)
             best_value = min(expectation, best_value)
             beta = min(beta, best_value)
             # print("best min value obtained = ",best_value)
