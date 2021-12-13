@@ -1,5 +1,3 @@
-import numpy as np
-import random
 import sys
 import os
 from helper_functions import *
@@ -8,8 +6,7 @@ sys.path.append(os.getcwd())
 
 from BaseAI import BaseAI
 from Grid import Grid
-from trap_minimax_new import find_trap
-from move_minimax_new import find_move
+from PlayerMinMax.move_minimax_new import find_move
 
 OPPONENT = lambda player: 3 - player
 
@@ -33,8 +30,8 @@ class HardAI(BaseAI):
     def getMove(self, grid):
         """ Returns a random, valid move """
 
-        new_pos = move_heuristic(player_num=self.player_num, position=self.pos, grid=grid)
-        #new_pos = find_move(grid, self.player_num)
+        # new_pos = move_heuristic(player_num=self.player_num, position=self.pos, grid=grid)
+        new_pos = find_move(grid, self.player_num)
         return new_pos
 
     def getTrap(self, grid: Grid):

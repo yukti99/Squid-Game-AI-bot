@@ -1,16 +1,9 @@
-import numpy as np
-import random
-import time
-import sys
-import os
 from BaseAI import BaseAI
-from Grid import Grid
-from Utils import *
 import sys
 import os
 from helper_functions import *
-from move_minimax_new import find_move
-from trap_minimax_new import find_trap
+from PlayerMinMax.move_minimax_new import find_move
+from PlayerMinMax.trap_minimax_new import find_trap
 
 
 # setting path to parent directory
