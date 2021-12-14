@@ -7,6 +7,7 @@ ALPHA = -sys.maxsize
 BETA = sys.maxsize
 MAX_DEPTH = 3
 
+
 def hardcode(grid, player):
     corners = [(1, 1), (1, 5), (5, 1), (5, 5)]
     opponent_pos = get_opponent_position(grid, player)
@@ -121,11 +122,20 @@ def get_opponent_neighbours(grid: Grid, player_num: int):
     return opponent_neighbours
 
 
+def get_emptiness_around_the_trap(grid, current_trap):
+    white_cells = 0
+    available_cells = len(grid.get_neighbors(current_trap, only_available=True))
+    for x in range(max(current_trap[0] - 2, 0), min(current_trap[0] + 2, 6), 1):
+        for y in range(max(current_trap[1] - 2, 0), min(current_trap[1] + 2, 6), 1):
+            if grid.getCellValue((x, y)) == 0:
+                white_cells = white_cells + 1
+    return white_cells
+
+
 # heuristic given to us by them
-def basic_heuristic(grid, my_position, opponent_pos):
-    no_neighbours = len(grid.get_neighbors(my_position, only_available=True))
-    opponent_neighbours = len(grid.get_neighbors(opponent_pos, only_available=True))
-    return no_neighbours - 2*opponent_neighbours
+def white_cell_heuristic(grid, player_neighbours, opp_neighbours, current_trap):
+    emptiness = get_emptiness_around_the_trap(grid, current_trap)
+    return player_neighbours - 2*(emptiness+opp_neighbours)
 
 
 def basic_heuristic_for_new_trap(grid, opponent_pos):
@@ -142,10 +152,8 @@ def minimax_trap(grid: Grid, depth, player, isMax, alpha, beta, current_trap: tu
     opp_neighbours = get_opponent_neighbours(grid, player)
     player_neighbours = grid.get_neighbors(grid.find(player), only_available=True)
     if depth > MAX_DEPTH:
-        opponent_pos = grid.find(3-player)
-        player_pos = grid.find(player)
-        # return basic heuristic when depth reached
-        return basic_heuristic(grid, player_pos, opponent_pos)
+        return white_cell_heuristic(grid, len(player_neighbours), len(opp_neighbours), current_trap)
+        # return len(player_neighbours) - 2 * len(opp_neighbours) * available_cells
 
 
     # if we win
@@ -158,7 +166,7 @@ def minimax_trap(grid: Grid, depth, player, isMax, alpha, beta, current_trap: tu
 
     # good_traps_against_opponent = trap_h(player, grid, depth)
     good_traps_against_opponent = hardcode(grid, player)
-
+    multiplier = len(good_traps_against_opponent)
     if isMax == 1:
         # we put trap
         best_value = -sys.maxsize
@@ -166,10 +174,10 @@ def minimax_trap(grid: Grid, depth, player, isMax, alpha, beta, current_trap: tu
         for i in good_traps_against_opponent:
             hit_probability = 1 - 0.05 * (manhattan_distance(grid.find(player), i) - 1)
             if hit_probability > 0.9 or depth > MAX_DEPTH-1:
-                expectation = (len(good_traps_against_opponent) - counter) * minimax_trap(grid, depth + 1, player, 0,
-                                                                                          alpha, beta, (0, 0))
+                expectation = (multiplier - counter) * minimax_trap(grid, depth + 1, player, 0,
+                                                                                          alpha, beta, i)
             else:
-                expectation = (len(good_traps_against_opponent) - counter) * minimax_trap(grid, depth, player, 2, alpha,
+                expectation = (multiplier - counter) * minimax_trap(grid, depth, player, 2, alpha,
                                                                                           beta, i)
             # available_cells = len(grid.get_neighbors(i, only_available=True))
             # expectation = expectation * available_cells
@@ -188,7 +196,7 @@ def minimax_trap(grid: Grid, depth, player, isMax, alpha, beta, current_trap: tu
         previous_player_position = grid.find(3-player)
         for j in good_traps_against_opponent:
             grid.move(j, 3-player)
-            best_value = min(best_value, minimax_trap(grid, depth+1, player, 1, alpha, beta, (0, 0)))
+            best_value = min(best_value, minimax_trap(grid, depth+1, player, 1, alpha, beta, j))
             beta = min(beta, best_value)
             grid.move(previous_player_position, 3-player)
             if beta <= alpha:
@@ -207,10 +215,10 @@ def minimax_trap(grid: Grid, depth, player, isMax, alpha, beta, current_trap: tu
         for j in range(len(all_possible_positions)):
             grid.setCellValue(all_possible_positions[j], -1)
             if i == all_possible_positions[j]:
-                recursion_value = minimax_trap(grid, depth + 1, player, 0, alpha, beta, (0,0))
+                recursion_value = minimax_trap(grid, depth + 1, player, 0, alpha, beta, all_possible_positions[j])
                 expectation = expectation + hit_probability * recursion_value
             else:
-                recursion_value = minimax_trap(grid, depth + 1, player, 0, alpha, beta, (0, 0))
+                recursion_value = minimax_trap(grid, depth + 1, player, 0, alpha, beta, all_possible_positions[j])
                 expectation = expectation + missing_probability * recursion_value
             grid.setCellValue(all_possible_positions[j], 0)
             best_value = max(best_value, expectation)
