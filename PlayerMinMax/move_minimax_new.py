@@ -46,7 +46,6 @@ def get_continuous_space(grid, current_pos):
 
 def get_emptiness_around_the_move(grid, current_pos):
     white_cells = 0
-    # print("Current Move:{}".format(current_pos))
     empty_space = get_continuous_space(grid, current_pos)
     for x in range(max(current_pos[0] - 2, 0), min(current_pos[0] + 2, 6), 1):
         for y in range(max(current_pos[1] - 2, 0), min(current_pos[1] + 2, 6), 1):

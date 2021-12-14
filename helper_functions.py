@@ -51,6 +51,7 @@ def trap_h(player_num: int, grid: Grid):
             board_v = board_value(grid_clone, opponent_neighbours[i], player_pos)
             # print("Position: {} and board value:{}".format(opponent_neighbours[i], board_v))
             board_value_dict[opponent_neighbours[i]] = board_v
+
     max_position = max(board_value_dict, key=board_value_dict.get)
     tied_positions = {}
     for key in board_value_dict.keys():
