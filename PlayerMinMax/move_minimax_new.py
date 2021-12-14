@@ -8,14 +8,51 @@ BETA = sys.maxsize
 MAX_DEPTH = 3
 
 
+def get_continuous_space(grid, current_pos):
+    count = 0
+    x, y = current_pos
+    x_search = x
+    while x_search >= 0:
+        if grid.getCellValue((x_search, y)) == 0:
+            count = count + 1
+            x_search = x_search - 1
+        else:
+            break
+    x_search = x
+    while x_search <= 6:
+        if grid.getCellValue((x_search, y)) == 0:
+            count = count + 1
+            x_search = x_search + 1
+        else:
+            break
+
+    y_search = y
+    while y_search >= 0:
+        if grid.getCellValue((x, y_search)) == 0:
+            count = count + 1
+            y_search = y_search - 1
+        else:
+            break
+
+    y_search = y
+    while y_search <= 6:
+        if grid.getCellValue((x, y_search)) == 0:
+            count = count + 1
+            y_search = y_search + 1
+        else:
+            break
+    return count + 0.5
+
+
 def get_emptiness_around_the_move(grid, current_pos):
     white_cells = 0
-    available_cells = len(grid.get_neighbors(current_pos, only_available=True))
+    # print("Current Move:{}".format(current_pos))
+    empty_space = get_continuous_space(grid, current_pos)
     for x in range(max(current_pos[0] - 2, 0), min(current_pos[0] + 2, 6), 1):
         for y in range(max(current_pos[1] - 2, 0), min(current_pos[1] + 2, 6), 1):
             if grid.getCellValue((x, y)) == 0:
                 white_cells = white_cells + 1
-    return white_cells - available_cells
+    return white_cells + empty_space
 
 
 def move_heuristic(player_num: int, grid: Grid):
@@ -29,6 +66,15 @@ def move_heuristic(player_num: int, grid: Grid):
         moves_dict[my_new_available_moves[i]] = board_v
     max_position = list(sorted(moves_dict, key=moves_dict.get, reverse=True))
     return max_position
+
+
+def diagonal(pos1, pos2):
+    (x1,y1) = pos1
+    (x2, y2) = pos2
+    if x1 != x2 and y1 != y2:
+        return True
+    else:
+        return False
 
 
 def find_candidate_moves(grid, my_position, opponent_pos, player_neighbours, opponent_neighbours):
@@ -50,6 +96,9 @@ def get_opponent_neighbours(grid: Grid, player_num: int):
 # heuristic given to us by them
 def white_cell_move_heuristic(grid, my_position, opponent_pos, current_move, player_neighbours, opponent_neighbours):
     emptiness = get_emptiness_around_the_move(grid, current_move)
+    if diagonal(my_position, current_move):
+        emptiness = 1.5 * emptiness
+    # print("Move:{}, emptiness:{}".format(current_move, emptiness))
     if 47 - len(grid.getAvailableCells()) < 15:
         # Chasing the opponent
         d = manhattan_distance(my_position, opponent_pos)

@@ -89,7 +89,7 @@ def hardcode(grid, player):
 
 
 def diagonal(pos1, pos2):
-    (x1,y1) = pos1
+    (x1, y1) = pos1
     (x2, y2) = pos2
     if x1 != x2 and y1 != y2:
         return True
@@ -135,7 +135,7 @@ def get_emptiness_around_the_trap(grid, current_trap):
 # heuristic given to us by them
 def white_cell_heuristic(grid, player_neighbours, opp_neighbours, current_trap):
     emptiness = get_emptiness_around_the_trap(grid, current_trap)
-    return player_neighbours - 2*(emptiness+opp_neighbours)
+    return player_neighbours - 3*emptiness - 2*opp_neighbours
 
 
 def basic_heuristic_for_new_trap(grid, opponent_pos):
